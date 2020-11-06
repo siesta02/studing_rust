@@ -1,3 +1,4 @@
+use std::boxed::Box;
 
 struct Point{
     x: i32,
@@ -7,6 +8,12 @@ struct Rect{
     width: u32,
     height: u32,
 }
+struct Rect2<T>{
+    width: T,
+    height: T,
+}
+struct Dog{}
+struct Cat{}
 union MyUnion{
     f1: u32,
     f2: u32,
@@ -138,4 +145,35 @@ fn main() {
     let r = Rect { width: 200, height: 300};
     println!("{}", r.area());
 
+    trait Printable {fn print(&self);}
+    impl Printable for Rect { 
+        fn print(&self){
+            println!("width:{}, height{}", self.width, self.height)
+        }
+    }
+    let r = Rect {width: 200, height: 300 };
+    r.print();
+
+    impl<T> Printable for Rect2<T> where T: std::fmt::Display {
+        fn print(self: &Rect2<T>){
+            println!("{}x{}", self.width, self.height)
+        }
+    }
+    let r1: Rect2<i32> = Rect2{width: 100, height: 200};
+    let r2: Rect2<i64> = Rect2{width: 100, height: 200};
+    r1.print();
+    r2.print();
+
+    trait Animal{fn cry(&self);}
+    impl Animal for Dog {fn cry(&self){println!("Bow-wow!");}}
+    impl Animal for Cat {fn cry(&self){println!("Miaow");}}
+    fn get_animal(animal_type: &str) -> Box<dyn Animal> {
+        if animal_type == "dog" {
+            return Box::new(Dog {});
+        }else {
+            return Box::new(Cat {});
+        }
+    }
+    get_animal("dog").cry();
+    get_animal("cat").cry();
 }

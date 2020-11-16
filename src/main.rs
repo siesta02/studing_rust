@@ -1,5 +1,6 @@
 use std::boxed::Box;
-
+use std::thread;
+use std::time::Duration;
 struct Point{
     x: i32,
     y: i32,
@@ -14,6 +15,10 @@ struct Rect2<T>{
 }
 struct Dog{}
 struct Cat{}
+struct Counter {
+    max: u32,
+    count: u32,
+}
 union MyUnion{
     f1: u32,
     f2: u32,
@@ -146,7 +151,7 @@ fn main() {
     println!("{}", r.area());
 
     trait Printable {fn print(&self);}
-    impl Printable for Rect { 
+    impl Printable for Rect {
         fn print(&self){
             println!("width:{}, height{}", self.width, self.height)
         }
@@ -174,6 +179,49 @@ fn main() {
             return Box::new(Cat {});
         }
     }
+
     get_animal("dog").cry();
     get_animal("cat").cry();
+
+    impl Counter {
+        fn new(max: u32) -> Counter{
+            Counter {max: max, count:0}
+        }
+    }
+    impl Iterator for Counter {
+        type Item = u32;
+        fn next(&mut self) -> Option<Self::Item>{
+            self.count += 1;
+            if self.count < self.max {
+                Some(self.count)
+            }else{
+                None
+            }
+        }
+    }
+    let counter = Counter::new(10);
+    for c in counter{
+        println!("{}", c);
+    }
+
+    let th = thread::spawn(|| {
+        for _i in 1..10 {
+            println!("A");
+            thread::sleep(Duration::from_millis(100));
+        }
+    });
+    th.join().unwrap();
+    println!("Finished");
+
+    let str = String::from("ABC");
+    let th = thread::spawn(move || {
+        for _i in 1..10 {
+            println!("{}", str);
+            thread::sleep(Duration::from_millis(100));
+        }
+    });
+    th.join().unwrap();
+    println!("Finishe");
+
+
 }

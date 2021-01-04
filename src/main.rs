@@ -1,6 +1,7 @@
 use std::boxed::Box;
 use std::thread;
 use std::time::Duration;
+use foo::bar as bbaarr;
 struct Point{
     x: i32,
     y: i32,
@@ -31,6 +32,8 @@ enum Color{
 macro_rules! log{
     ($x:expr) => { println!("{}", $x); }
 }
+
+mod foo;
 
 fn main() {
     println!("Hello, world!");
@@ -223,5 +226,17 @@ fn main() {
     th.join().unwrap();
     println!("Finishe");
 
+    // await async　
+    //crate 
 
+    bbaarr::bar_func();
+
+    let mut a = 123;
+    let p = &mut a;
+    *p = 456;
+    println!("{}", a);
+
+    bbaarr::func1();
+
+    
 }
